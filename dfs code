@@ -1,0 +1,44 @@
+from collections import deque
+
+def dfs(graph, start, goal):
+    visited = set()         # To keep track of visited nodes
+    stack = [(start, [start])]  # Stack stores (current_node, path_taken)
+
+    print("DFS Traversal Order:", end=" ")
+
+    while stack:
+        node, path = stack.pop()    # Get last added node (LIFO)
+
+        if node not in visited:
+            print(node, end=" ")    # Visit the node
+            visited.add(node)
+
+            # If goal is found, return the path
+            if node == goal:
+                return path
+
+            # Add unvisited neighbors to the stack with updated path
+            for neighbor in reversed(graph[node]):
+                if neighbor not in visited:
+                    stack.append((neighbor, path + [neighbor]))
+
+    return None  # No path found
+
+
+# Example graph represented as adjacency list
+graph = {
+    'S': ['A', 'B'],
+    'A': ['C', 'D'],
+    'B': ['E'],
+    'C': ['F'],
+    'D': [],
+    'E': ['F'],
+    'F': []
+}
+
+start_node = 'S'
+goal_node = 'F'
+
+# Run DFS and display traversal and path
+path = dfs(graph, start_node, goal_node)
+print("\nPath from {} to {}: {}".format(start_node, goal_node, path if path else "No path found"))

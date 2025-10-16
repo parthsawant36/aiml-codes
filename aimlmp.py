@@ -1,0 +1,1957 @@
+{
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "a630d943",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-03-07T15:17:24.227628Z",
+     "iopub.status.busy": "2025-03-07T15:17:24.227363Z",
+     "iopub.status.idle": "2025-03-07T15:17:24.927271Z",
+     "shell.execute_reply": "2025-03-07T15:17:24.926625Z"
+    },
+    "papermill": {
+     "duration": 0.710393,
+     "end_time": "2025-03-07T15:17:24.928875",
+     "exception": false,
+     "start_time": "2025-03-07T15:17:24.218482",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "import pandas as pd\n",
+    "import numpy as np"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "id": "66a1e30e",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-03-07T15:17:24.947013Z",
+     "iopub.status.busy": "2025-03-07T15:17:24.946689Z",
+     "iopub.status.idle": "2025-03-07T15:17:25.308170Z",
+     "shell.execute_reply": "2025-03-07T15:17:25.307121Z"
+    },
+    "papermill": {
+     "duration": 0.372023,
+     "end_time": "2025-03-07T15:17:25.309906",
+     "exception": false,
+     "start_time": "2025-03-07T15:17:24.937883",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "data = pd.read_csv('/kaggle/input/fake-news-detection/data.csv')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "id": "e7ea9b2e",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-03-07T15:17:25.328752Z",
+     "iopub.status.busy": "2025-03-07T15:17:25.328390Z",
+     "iopub.status.idle": "2025-03-07T15:17:25.351900Z",
+     "shell.execute_reply": "2025-03-07T15:17:25.351118Z"
+    },
+    "papermill": {
+     "duration": 0.034451,
+     "end_time": "2025-03-07T15:17:25.353479",
+     "exception": false,
+     "start_time": "2025-03-07T15:17:25.319028",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>URLs</th>\n",
+       "      <th>Headline</th>\n",
+       "      <th>Body</th>\n",
+       "      <th>Label</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>http://www.bbc.com/news/world-us-canada-414191...</td>\n",
+       "      <td>Four ways Bob Corker skewered Donald Trump</td>\n",
+       "      <td>Image copyright Getty Images\\nOn Sunday mornin...</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>https://www.reuters.com/article/us-filmfestiva...</td>\n",
+       "      <td>Linklater's war veteran comedy speaks to moder...</td>\n",
+       "      <td>LONDON (Reuters) - “Last Flag Flying”, a comed...</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>https://www.nytimes.com/2017/10/09/us/politics...</td>\n",
+       "      <td>Trump’s Fight With Corker Jeopardizes His Legi...</td>\n",
+       "      <td>The feud broke into public view last week when...</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>https://www.reuters.com/article/us-mexico-oil-...</td>\n",
+       "      <td>Egypt's Cheiron wins tie-up with Pemex for Mex...</td>\n",
+       "      <td>MEXICO CITY (Reuters) - Egypt’s Cheiron Holdin...</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>http://www.cnn.com/videos/cnnmoney/2017/10/08/...</td>\n",
+       "      <td>Jason Aldean opens 'SNL' with Vegas tribute</td>\n",
+       "      <td>Country singer Jason Aldean, who was performin...</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>5</th>\n",
+       "      <td>http://beforeitsnews.com/sports/2017/09/jetnat...</td>\n",
+       "      <td>JetNation FanDuel League; Week 4</td>\n",
+       "      <td>JetNation FanDuel League; Week 4\\n% of readers...</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>6</th>\n",
+       "      <td>https://www.nytimes.com/2017/10/10/us/politics...</td>\n",
+       "      <td>Kansas Tried a Tax Plan Similar to Trump’s. It...</td>\n",
+       "      <td>In 2012, Kansas lawmakers, led by Gov. Sam Bro...</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>7</th>\n",
+       "      <td>https://www.reuters.com/article/us-india-cenba...</td>\n",
+       "      <td>India RBI chief: growth important, but not at ...</td>\n",
+       "      <td>The Reserve Bank of India (RBI) Governor Urjit...</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>8</th>\n",
+       "      <td>https://www.reuters.com/article/us-climatechan...</td>\n",
+       "      <td>EPA chief to sign rule on Clean Power Plan exi...</td>\n",
+       "      <td>Scott Pruitt, Administrator of the U.S. Enviro...</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>9</th>\n",
+       "      <td>https://www.reuters.com/article/us-air-berlin-...</td>\n",
+       "      <td>Talks on sale of Air Berlin planes to easyJet ...</td>\n",
+       "      <td>FILE PHOTO - An Air Berlin sign is seen at an ...</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                                                URLs  \\\n",
+       "0  http://www.bbc.com/news/world-us-canada-414191...   \n",
+       "1  https://www.reuters.com/article/us-filmfestiva...   \n",
+       "2  https://www.nytimes.com/2017/10/09/us/politics...   \n",
+       "3  https://www.reuters.com/article/us-mexico-oil-...   \n",
+       "4  http://www.cnn.com/videos/cnnmoney/2017/10/08/...   \n",
+       "5  http://beforeitsnews.com/sports/2017/09/jetnat...   \n",
+       "6  https://www.nytimes.com/2017/10/10/us/politics...   \n",
+       "7  https://www.reuters.com/article/us-india-cenba...   \n",
+       "8  https://www.reuters.com/article/us-climatechan...   \n",
+       "9  https://www.reuters.com/article/us-air-berlin-...   \n",
+       "\n",
+       "                                            Headline  \\\n",
+       "0         Four ways Bob Corker skewered Donald Trump   \n",
+       "1  Linklater's war veteran comedy speaks to moder...   \n",
+       "2  Trump’s Fight With Corker Jeopardizes His Legi...   \n",
+       "3  Egypt's Cheiron wins tie-up with Pemex for Mex...   \n",
+       "4        Jason Aldean opens 'SNL' with Vegas tribute   \n",
+       "5                   JetNation FanDuel League; Week 4   \n",
+       "6  Kansas Tried a Tax Plan Similar to Trump’s. It...   \n",
+       "7  India RBI chief: growth important, but not at ...   \n",
+       "8  EPA chief to sign rule on Clean Power Plan exi...   \n",
+       "9  Talks on sale of Air Berlin planes to easyJet ...   \n",
+       "\n",
+       "                                                Body  Label  \n",
+       "0  Image copyright Getty Images\\nOn Sunday mornin...      1  \n",
+       "1  LONDON (Reuters) - “Last Flag Flying”, a comed...      1  \n",
+       "2  The feud broke into public view last week when...      1  \n",
+       "3  MEXICO CITY (Reuters) - Egypt’s Cheiron Holdin...      1  \n",
+       "4  Country singer Jason Aldean, who was performin...      1  \n",
+       "5  JetNation FanDuel League; Week 4\\n% of readers...      0  \n",
+       "6  In 2012, Kansas lawmakers, led by Gov. Sam Bro...      1  \n",
+       "7  The Reserve Bank of India (RBI) Governor Urjit...      1  \n",
+       "8  Scott Pruitt, Administrator of the U.S. Enviro...      1  \n",
+       "9  FILE PHOTO - An Air Berlin sign is seen at an ...      1  "
+      ]
+     },
+     "execution_count": 5,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "data.head(10)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "id": "4b4b544d",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-03-07T15:17:25.377641Z",
+     "iopub.status.busy": "2025-03-07T15:17:25.377339Z",
+     "iopub.status.idle": "2025-03-07T15:17:25.384966Z",
+     "shell.execute_reply": "2025-03-07T15:17:25.384184Z"
+    },
+    "papermill": {
+     "duration": 0.018535,
+     "end_time": "2025-03-07T15:17:25.386630",
+     "exception": false,
+     "start_time": "2025-03-07T15:17:25.368095",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>URLs</th>\n",
+       "      <th>Headline</th>\n",
+       "      <th>Body</th>\n",
+       "      <th>Label</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>4004</th>\n",
+       "      <td>http://beforeitsnews.com/sports/2017/09/trends...</td>\n",
+       "      <td>Trends to Watch</td>\n",
+       "      <td>Trends to Watch\\n% of readers think this story...</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4005</th>\n",
+       "      <td>http://beforeitsnews.com/u-s-politics/2017/10/...</td>\n",
+       "      <td>Trump Jr. Is Soon To Give A 30-Minute Speech F...</td>\n",
+       "      <td>Trump Jr. Is Soon To Give A 30-Minute Speech F...</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4006</th>\n",
+       "      <td>https://www.activistpost.com/2017/09/ron-paul-...</td>\n",
+       "      <td>Ron Paul on Trump, Anarchism &amp; the AltRight</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4007</th>\n",
+       "      <td>https://www.reuters.com/article/us-china-pharm...</td>\n",
+       "      <td>China to accept overseas trial data in bid to ...</td>\n",
+       "      <td>SHANGHAI (Reuters) - China said it plans to ac...</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4008</th>\n",
+       "      <td>http://beforeitsnews.com/u-s-politics/2017/10/...</td>\n",
+       "      <td>Vice President Mike Pence Leaves NFL Game Beca...</td>\n",
+       "      <td>Vice President Mike Pence Leaves NFL Game Beca...</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                                                   URLs  \\\n",
+       "4004  http://beforeitsnews.com/sports/2017/09/trends...   \n",
+       "4005  http://beforeitsnews.com/u-s-politics/2017/10/...   \n",
+       "4006  https://www.activistpost.com/2017/09/ron-paul-...   \n",
+       "4007  https://www.reuters.com/article/us-china-pharm...   \n",
+       "4008  http://beforeitsnews.com/u-s-politics/2017/10/...   \n",
+       "\n",
+       "                                               Headline  \\\n",
+       "4004                                    Trends to Watch   \n",
+       "4005  Trump Jr. Is Soon To Give A 30-Minute Speech F...   \n",
+       "4006        Ron Paul on Trump, Anarchism & the AltRight   \n",
+       "4007  China to accept overseas trial data in bid to ...   \n",
+       "4008  Vice President Mike Pence Leaves NFL Game Beca...   \n",
+       "\n",
+       "                                                   Body  Label  \n",
+       "4004  Trends to Watch\\n% of readers think this story...      0  \n",
+       "4005  Trump Jr. Is Soon To Give A 30-Minute Speech F...      0  \n",
+       "4006                                                NaN      0  \n",
+       "4007  SHANGHAI (Reuters) - China said it plans to ac...      1  \n",
+       "4008  Vice President Mike Pence Leaves NFL Game Beca...      0  "
+      ]
+     },
+     "execution_count": 6,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "data.tail()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "id": "e73ee930",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-03-07T15:17:25.414056Z",
+     "iopub.status.busy": "2025-03-07T15:17:25.413782Z",
+     "iopub.status.idle": "2025-03-07T15:17:25.438910Z",
+     "shell.execute_reply": "2025-03-07T15:17:25.437908Z"
+    },
+    "papermill": {
+     "duration": 0.0372,
+     "end_time": "2025-03-07T15:17:25.440443",
+     "exception": false,
+     "start_time": "2025-03-07T15:17:25.403243",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "<class 'pandas.core.frame.DataFrame'>\n",
+      "RangeIndex: 4009 entries, 0 to 4008\n",
+      "Data columns (total 4 columns):\n",
+      " #   Column    Non-Null Count  Dtype \n",
+      "---  ------    --------------  ----- \n",
+      " 0   URLs      4009 non-null   object\n",
+      " 1   Headline  4009 non-null   object\n",
+      " 2   Body      3988 non-null   object\n",
+      " 3   Label     4009 non-null   int64 \n",
+      "dtypes: int64(1), object(3)\n",
+      "memory usage: 125.4+ KB\n"
+     ]
+    }
+   ],
+   "source": [
+    "data.info()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "id": "29915c3c",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-03-07T15:17:25.464764Z",
+     "iopub.status.busy": "2025-03-07T15:17:25.464521Z",
+     "iopub.status.idle": "2025-03-07T15:17:25.469845Z",
+     "shell.execute_reply": "2025-03-07T15:17:25.468332Z"
+    },
+    "papermill": {
+     "duration": 0.016384,
+     "end_time": "2025-03-07T15:17:25.471470",
+     "exception": false,
+     "start_time": "2025-03-07T15:17:25.455086",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(4009, 4)"
+      ]
+     },
+     "execution_count": 8,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "data.shape"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "id": "7c27caf3",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-03-07T15:17:25.497083Z",
+     "iopub.status.busy": "2025-03-07T15:17:25.496790Z",
+     "iopub.status.idle": "2025-03-07T15:17:25.504794Z",
+     "shell.execute_reply": "2025-03-07T15:17:25.504021Z"
+    },
+    "papermill": {
+     "duration": 0.018813,
+     "end_time": "2025-03-07T15:17:25.506065",
+     "exception": false,
+     "start_time": "2025-03-07T15:17:25.487252",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "URLs         0\n",
+       "Headline     0\n",
+       "Body        21\n",
+       "Label        0\n",
+       "dtype: int64"
+      ]
+     },
+     "execution_count": 9,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "data.isnull().sum() "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "7a0f45ad",
+   "metadata": {
+    "papermill": {
+     "duration": 0.008748,
+     "end_time": "2025-03-07T15:17:25.523802",
+     "exception": false,
+     "start_time": "2025-03-07T15:17:25.515054",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "source": [
+    "## **Data Cleaning**"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "id": "1b54c113",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-03-07T15:17:25.542456Z",
+     "iopub.status.busy": "2025-03-07T15:17:25.542143Z",
+     "iopub.status.idle": "2025-03-07T15:17:25.553358Z",
+     "shell.execute_reply": "2025-03-07T15:17:25.552673Z"
+    },
+    "papermill": {
+     "duration": 0.022045,
+     "end_time": "2025-03-07T15:17:25.554704",
+     "exception": false,
+     "start_time": "2025-03-07T15:17:25.532659",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "URLs        0\n",
+       "Headline    0\n",
+       "Body        0\n",
+       "Label       0\n",
+       "dtype: int64"
+      ]
+     },
+     "execution_count": 10,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "data= data.dropna() # remove null values\n",
+    "data.isnull().sum()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 11,
+   "id": "e437fdc6",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-03-07T15:17:25.573685Z",
+     "iopub.status.busy": "2025-03-07T15:17:25.573450Z",
+     "iopub.status.idle": "2025-03-07T15:17:25.578033Z",
+     "shell.execute_reply": "2025-03-07T15:17:25.577181Z"
+    },
+    "papermill": {
+     "duration": 0.015667,
+     "end_time": "2025-03-07T15:17:25.579395",
+     "exception": false,
+     "start_time": "2025-03-07T15:17:25.563728",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(3988, 4)"
+      ]
+     },
+     "execution_count": 11,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "data.shape"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 12,
+   "id": "f3a44010",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-03-07T15:17:25.598566Z",
+     "iopub.status.busy": "2025-03-07T15:17:25.598241Z",
+     "iopub.status.idle": "2025-03-07T15:17:25.625697Z",
+     "shell.execute_reply": "2025-03-07T15:17:25.624802Z"
+    },
+    "papermill": {
+     "duration": 0.038608,
+     "end_time": "2025-03-07T15:17:25.627181",
+     "exception": false,
+     "start_time": "2025-03-07T15:17:25.588573",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "# combine headline and body in text variable\n",
+    "data.loc[:, 'text'] = data['Headline'].fillna('') + ' ' + data['Body'].fillna('')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 13,
+   "id": "5ab3299a",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-03-07T15:17:25.657131Z",
+     "iopub.status.busy": "2025-03-07T15:17:25.656840Z",
+     "iopub.status.idle": "2025-03-07T15:17:25.663312Z",
+     "shell.execute_reply": "2025-03-07T15:17:25.662513Z"
+    },
+    "papermill": {
+     "duration": 0.025045,
+     "end_time": "2025-03-07T15:17:25.664902",
+     "exception": false,
+     "start_time": "2025-03-07T15:17:25.639857",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0       Four ways Bob Corker skewered Donald Trump Ima...\n",
+       "1       Linklater's war veteran comedy speaks to moder...\n",
+       "2       Trump’s Fight With Corker Jeopardizes His Legi...\n",
+       "3       Egypt's Cheiron wins tie-up with Pemex for Mex...\n",
+       "4       Jason Aldean opens 'SNL' with Vegas tribute Co...\n",
+       "                              ...                        \n",
+       "4003    CNN and Globalist Exposed - Steve Quayle and A...\n",
+       "4004    Trends to Watch Trends to Watch\\n% of readers ...\n",
+       "4005    Trump Jr. Is Soon To Give A 30-Minute Speech F...\n",
+       "4007    China to accept overseas trial data in bid to ...\n",
+       "4008    Vice President Mike Pence Leaves NFL Game Beca...\n",
+       "Name: text, Length: 3988, dtype: object"
+      ]
+     },
+     "execution_count": 13,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "data['text']"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 14,
+   "id": "b0647f71",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-03-07T15:17:25.698273Z",
+     "iopub.status.busy": "2025-03-07T15:17:25.698007Z",
+     "iopub.status.idle": "2025-03-07T15:17:25.708644Z",
+     "shell.execute_reply": "2025-03-07T15:17:25.707811Z"
+    },
+    "papermill": {
+     "duration": 0.028473,
+     "end_time": "2025-03-07T15:17:25.710151",
+     "exception": false,
+     "start_time": "2025-03-07T15:17:25.681678",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "URLs        0\n",
+       "Headline    0\n",
+       "Body        0\n",
+       "Label       0\n",
+       "text        0\n",
+       "dtype: int64"
+      ]
+     },
+     "execution_count": 14,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "data.dropna()\n",
+    "data.isnull().sum()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 15,
+   "id": "6e994237",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-03-07T15:17:25.733785Z",
+     "iopub.status.busy": "2025-03-07T15:17:25.733540Z",
+     "iopub.status.idle": "2025-03-07T15:17:25.737700Z",
+     "shell.execute_reply": "2025-03-07T15:17:25.736916Z"
+    },
+    "papermill": {
+     "duration": 0.015669,
+     "end_time": "2025-03-07T15:17:25.739178",
+     "exception": false,
+     "start_time": "2025-03-07T15:17:25.723509",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(3988, 5)"
+      ]
+     },
+     "execution_count": 15,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "data.shape"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 16,
+   "id": "98f2f6c9",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-03-07T15:17:25.765086Z",
+     "iopub.status.busy": "2025-03-07T15:17:25.764797Z",
+     "iopub.status.idle": "2025-03-07T15:17:25.774508Z",
+     "shell.execute_reply": "2025-03-07T15:17:25.773650Z"
+    },
+    "papermill": {
+     "duration": 0.025538,
+     "end_time": "2025-03-07T15:17:25.776127",
+     "exception": false,
+     "start_time": "2025-03-07T15:17:25.750589",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>Label</th>\n",
+       "      <th>text</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>1</td>\n",
+       "      <td>Four ways Bob Corker skewered Donald Trump Ima...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>1</td>\n",
+       "      <td>Linklater's war veteran comedy speaks to moder...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>1</td>\n",
+       "      <td>Trump’s Fight With Corker Jeopardizes His Legi...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>1</td>\n",
+       "      <td>Egypt's Cheiron wins tie-up with Pemex for Mex...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>1</td>\n",
+       "      <td>Jason Aldean opens 'SNL' with Vegas tribute Co...</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "   Label                                               text\n",
+       "0      1  Four ways Bob Corker skewered Donald Trump Ima...\n",
+       "1      1  Linklater's war veteran comedy speaks to moder...\n",
+       "2      1  Trump’s Fight With Corker Jeopardizes His Legi...\n",
+       "3      1  Egypt's Cheiron wins tie-up with Pemex for Mex...\n",
+       "4      1  Jason Aldean opens 'SNL' with Vegas tribute Co..."
+      ]
+     },
+     "execution_count": 16,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# remove uncessary columns\n",
+    "data = data.drop(columns=['Headline', 'Body', 'URLs'])\n",
+    "data.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 17,
+   "id": "bbd90be8",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-03-07T15:17:25.806547Z",
+     "iopub.status.busy": "2025-03-07T15:17:25.806290Z",
+     "iopub.status.idle": "2025-03-07T15:17:25.809604Z",
+     "shell.execute_reply": "2025-03-07T15:17:25.808837Z"
+    },
+    "papermill": {
+     "duration": 0.015716,
+     "end_time": "2025-03-07T15:17:25.810941",
+     "exception": false,
+     "start_time": "2025-03-07T15:17:25.795225",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "X = data['text']\n",
+    "y = data['Label']"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 18,
+   "id": "9a67a53c",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-03-07T15:17:25.830438Z",
+     "iopub.status.busy": "2025-03-07T15:17:25.830134Z",
+     "iopub.status.idle": "2025-03-07T15:17:26.863390Z",
+     "shell.execute_reply": "2025-03-07T15:17:26.862731Z"
+    },
+    "papermill": {
+     "duration": 1.044675,
+     "end_time": "2025-03-07T15:17:26.864974",
+     "exception": false,
+     "start_time": "2025-03-07T15:17:25.820299",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "# Train Test Split\n",
+    "from sklearn.model_selection import train_test_split\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 19,
+   "id": "62550dfe",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-03-07T15:17:26.886030Z",
+     "iopub.status.busy": "2025-03-07T15:17:26.885660Z",
+     "iopub.status.idle": "2025-03-07T15:17:26.891347Z",
+     "shell.execute_reply": "2025-03-07T15:17:26.890773Z"
+    },
+    "papermill": {
+     "duration": 0.017524,
+     "end_time": "2025-03-07T15:17:26.892647",
+     "exception": false,
+     "start_time": "2025-03-07T15:17:26.875123",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "X_train,X_test,y_train,y_test = train_test_split(X,y,test_size=0.2,random_state=42)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 20,
+   "id": "16d99887",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-03-07T15:17:26.912262Z",
+     "iopub.status.busy": "2025-03-07T15:17:26.912059Z",
+     "iopub.status.idle": "2025-03-07T15:17:26.916494Z",
+     "shell.execute_reply": "2025-03-07T15:17:26.915817Z"
+    },
+    "papermill": {
+     "duration": 0.015543,
+     "end_time": "2025-03-07T15:17:26.917637",
+     "exception": false,
+     "start_time": "2025-03-07T15:17:26.902094",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "(3190,)\n",
+      "(798,)\n",
+      "(3190,)\n",
+      "(798,)\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(X_train.shape)\n",
+    "print(X_test.shape)\n",
+    "print(y_train.shape)\n",
+    "print(y_test.shape)\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "624b4039",
+   "metadata": {
+    "papermill": {
+     "duration": 0.009257,
+     "end_time": "2025-03-07T15:17:26.936293",
+     "exception": false,
+     "start_time": "2025-03-07T15:17:26.927036",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "source": [
+    "## **Text Preprocessing**"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 21,
+   "id": "8db4b072",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-03-07T15:17:26.955853Z",
+     "iopub.status.busy": "2025-03-07T15:17:26.955637Z",
+     "iopub.status.idle": "2025-03-07T15:17:27.384803Z",
+     "shell.execute_reply": "2025-03-07T15:17:27.384077Z"
+    },
+    "papermill": {
+     "duration": 0.440654,
+     "end_time": "2025-03-07T15:17:27.386336",
+     "exception": false,
+     "start_time": "2025-03-07T15:17:26.945682",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "import nltk\n",
+    "from nltk.corpus import stopwords\n",
+    "from nltk.tokenize import word_tokenize\n",
+    "from nltk.stem import PorterStemmer, WordNetLemmatizer"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 22,
+   "id": "f2b84a92",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-03-07T15:17:27.407338Z",
+     "iopub.status.busy": "2025-03-07T15:17:27.406989Z",
+     "iopub.status.idle": "2025-03-07T15:17:27.848355Z",
+     "shell.execute_reply": "2025-03-07T15:17:27.847532Z"
+    },
+    "papermill": {
+     "duration": 0.453211,
+     "end_time": "2025-03-07T15:17:27.849643",
+     "exception": false,
+     "start_time": "2025-03-07T15:17:27.396432",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Archive:  /usr/share/nltk_data/corpora/wordnet.zip\r\n",
+      "   creating: /usr/share/nltk_data/corpora/wordnet/\r\n",
+      "  inflating: /usr/share/nltk_data/corpora/wordnet/lexnames  \r\n",
+      "  inflating: /usr/share/nltk_data/corpora/wordnet/data.verb  \r\n",
+      "  inflating: /usr/share/nltk_data/corpora/wordnet/index.adv  \r\n",
+      "  inflating: /usr/share/nltk_data/corpora/wordnet/adv.exc  \r\n",
+      "  inflating: /usr/share/nltk_data/corpora/wordnet/index.verb  \r\n",
+      "  inflating: /usr/share/nltk_data/corpora/wordnet/cntlist.rev  \r\n",
+      "  inflating: /usr/share/nltk_data/corpora/wordnet/data.adj  \r\n",
+      "  inflating: /usr/share/nltk_data/corpora/wordnet/index.adj  \r\n",
+      "  inflating: /usr/share/nltk_data/corpora/wordnet/LICENSE  \r\n",
+      "  inflating: /usr/share/nltk_data/corpora/wordnet/citation.bib  \r\n",
+      "  inflating: /usr/share/nltk_data/corpora/wordnet/noun.exc  \r\n",
+      "  inflating: /usr/share/nltk_data/corpora/wordnet/verb.exc  \r\n",
+      "  inflating: /usr/share/nltk_data/corpora/wordnet/README  \r\n",
+      "  inflating: /usr/share/nltk_data/corpora/wordnet/index.sense  \r\n",
+      "  inflating: /usr/share/nltk_data/corpora/wordnet/data.noun  \r\n",
+      "  inflating: /usr/share/nltk_data/corpora/wordnet/data.adv  \r\n",
+      "  inflating: /usr/share/nltk_data/corpora/wordnet/index.noun  \r\n",
+      "  inflating: /usr/share/nltk_data/corpora/wordnet/adj.exc  \r\n"
+     ]
+    }
+   ],
+   "source": [
+    "!unzip /usr/share/nltk_data/corpora/wordnet.zip -d /usr/share/nltk_data/corpora/"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 23,
+   "id": "e6983b91",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-03-07T15:17:27.870558Z",
+     "iopub.status.busy": "2025-03-07T15:17:27.870252Z",
+     "iopub.status.idle": "2025-03-07T15:17:28.062272Z",
+     "shell.execute_reply": "2025-03-07T15:17:28.061517Z"
+    },
+    "papermill": {
+     "duration": 0.203576,
+     "end_time": "2025-03-07T15:17:28.063544",
+     "exception": false,
+     "start_time": "2025-03-07T15:17:27.859968",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "[nltk_data] Downloading package stopwords to /usr/share/nltk_data...\n",
+      "[nltk_data]   Unzipping corpora/stopwords.zip.\n",
+      "[nltk_data] Downloading package punkt to /usr/share/nltk_data...\n",
+      "[nltk_data]   Package punkt is already up-to-date!\n",
+      "[nltk_data] Downloading package wordnet to /usr/share/nltk_data...\n",
+      "[nltk_data]   Package wordnet is already up-to-date!\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "True"
+      ]
+     },
+     "execution_count": 23,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "nltk.download('stopwords')\n",
+    "nltk.download('punkt')\n",
+    "nltk.download('wordnet') "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 24,
+   "id": "8ed6268a",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-03-07T15:17:28.084244Z",
+     "iopub.status.busy": "2025-03-07T15:17:28.084014Z",
+     "iopub.status.idle": "2025-03-07T15:17:28.089234Z",
+     "shell.execute_reply": "2025-03-07T15:17:28.088440Z"
+    },
+    "papermill": {
+     "duration": 0.016693,
+     "end_time": "2025-03-07T15:17:28.090428",
+     "exception": false,
+     "start_time": "2025-03-07T15:17:28.073735",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "# Initialize stopwords, stemmer, and lemmatizer\n",
+    "stop_words = set(stopwords.words('english'))\n",
+    "stemmer = PorterStemmer()\n",
+    "lemmatizer = WordNetLemmatizer()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 25,
+   "id": "bdd41c32",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-03-07T15:17:28.110489Z",
+     "iopub.status.busy": "2025-03-07T15:17:28.110218Z",
+     "iopub.status.idle": "2025-03-07T15:17:28.114301Z",
+     "shell.execute_reply": "2025-03-07T15:17:28.113544Z"
+    },
+    "papermill": {
+     "duration": 0.015415,
+     "end_time": "2025-03-07T15:17:28.115512",
+     "exception": false,
+     "start_time": "2025-03-07T15:17:28.100097",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "def preprocess_text(text):\n",
+    "    words = word_tokenize(text.lower())\n",
+    "    words = [word for word in words if word.isalnum() and word not in stop_words]\n",
+    "    words = [stemmer.stem(word) for word in words]  # Stemming\n",
+    "    words = [lemmatizer.lemmatize(word) for word in words]  # Lemmatization\n",
+    "    return \" \".join(words)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 26,
+   "id": "ff6b6a63",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-03-07T15:17:28.135835Z",
+     "iopub.status.busy": "2025-03-07T15:17:28.135603Z",
+     "iopub.status.idle": "2025-03-07T15:18:03.527141Z",
+     "shell.execute_reply": "2025-03-07T15:18:03.526493Z"
+    },
+    "papermill": {
+     "duration": 35.403425,
+     "end_time": "2025-03-07T15:18:03.528820",
+     "exception": false,
+     "start_time": "2025-03-07T15:17:28.125395",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "X_train = X_train.apply(preprocess_text)\n",
+    "X_test = X_test.apply(preprocess_text)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 27,
+   "id": "31d8df8b",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-03-07T15:18:03.549818Z",
+     "iopub.status.busy": "2025-03-07T15:18:03.549584Z",
+     "iopub.status.idle": "2025-03-07T15:18:03.552775Z",
+     "shell.execute_reply": "2025-03-07T15:18:03.552142Z"
+    },
+    "papermill": {
+     "duration": 0.014727,
+     "end_time": "2025-03-07T15:18:03.553913",
+     "exception": false,
+     "start_time": "2025-03-07T15:18:03.539186",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "from sklearn.feature_extraction.text import TfidfVectorizer"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 28,
+   "id": "09f551c7",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-03-07T15:18:03.574219Z",
+     "iopub.status.busy": "2025-03-07T15:18:03.574016Z",
+     "iopub.status.idle": "2025-03-07T15:18:04.348254Z",
+     "shell.execute_reply": "2025-03-07T15:18:04.347594Z"
+    },
+    "papermill": {
+     "duration": 0.786109,
+     "end_time": "2025-03-07T15:18:04.349829",
+     "exception": false,
+     "start_time": "2025-03-07T15:18:03.563720",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "vectorizer = TfidfVectorizer()\n",
+    "X_train_V = vectorizer.fit_transform(X_train)\n",
+    "X_test_V = vectorizer.transform(X_test)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "5cbd6afd",
+   "metadata": {
+    "papermill": {
+     "duration": 0.009824,
+     "end_time": "2025-03-07T15:18:04.369818",
+     "exception": false,
+     "start_time": "2025-03-07T15:18:04.359994",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "source": [
+    "## **Model Training**"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "5d784fbf",
+   "metadata": {
+    "papermill": {
+     "duration": 0.009518,
+     "end_time": "2025-03-07T15:18:04.388992",
+     "exception": false,
+     "start_time": "2025-03-07T15:18:04.379474",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "source": [
+    "### **Naive Bayes**"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 29,
+   "id": "10988cd4",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-03-07T15:18:04.409730Z",
+     "iopub.status.busy": "2025-03-07T15:18:04.409440Z",
+     "iopub.status.idle": "2025-03-07T15:18:04.415264Z",
+     "shell.execute_reply": "2025-03-07T15:18:04.414469Z"
+    },
+    "papermill": {
+     "duration": 0.017929,
+     "end_time": "2025-03-07T15:18:04.416665",
+     "exception": false,
+     "start_time": "2025-03-07T15:18:04.398736",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "from sklearn.naive_bayes import MultinomialNB\n",
+    "from sklearn.metrics import accuracy_score"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 30,
+   "id": "5dc696cb",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-03-07T15:18:04.481498Z",
+     "iopub.status.busy": "2025-03-07T15:18:04.481151Z",
+     "iopub.status.idle": "2025-03-07T15:18:04.496230Z",
+     "shell.execute_reply": "2025-03-07T15:18:04.495513Z"
+    },
+    "papermill": {
+     "duration": 0.070913,
+     "end_time": "2025-03-07T15:18:04.497661",
+     "exception": false,
+     "start_time": "2025-03-07T15:18:04.426748",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "nb_model = MultinomialNB()\n",
+    "nb_model = nb_model.fit(X_train_V, y_train)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 31,
+   "id": "d3a6a6e5",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-03-07T15:18:04.520562Z",
+     "iopub.status.busy": "2025-03-07T15:18:04.520255Z",
+     "iopub.status.idle": "2025-03-07T15:18:04.525026Z",
+     "shell.execute_reply": "2025-03-07T15:18:04.524214Z"
+    },
+    "papermill": {
+     "duration": 0.016648,
+     "end_time": "2025-03-07T15:18:04.526364",
+     "exception": false,
+     "start_time": "2025-03-07T15:18:04.509716",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "nb_prediction = nb_model.predict(X_test_V)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 32,
+   "id": "5ceab138",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-03-07T15:18:04.546784Z",
+     "iopub.status.busy": "2025-03-07T15:18:04.546565Z",
+     "iopub.status.idle": "2025-03-07T15:18:04.551826Z",
+     "shell.execute_reply": "2025-03-07T15:18:04.551005Z"
+    },
+    "papermill": {
+     "duration": 0.01689,
+     "end_time": "2025-03-07T15:18:04.553175",
+     "exception": false,
+     "start_time": "2025-03-07T15:18:04.536285",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Naïve Bayes Accuracy: 0.9148\n"
+     ]
+    }
+   ],
+   "source": [
+    "nb_accuracy = accuracy_score(y_test, nb_prediction)\n",
+    "print(f'Naïve Bayes Accuracy: {nb_accuracy:.4f}')"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "92f6aca8",
+   "metadata": {
+    "papermill": {
+     "duration": 0.009748,
+     "end_time": "2025-03-07T15:18:04.573212",
+     "exception": false,
+     "start_time": "2025-03-07T15:18:04.563464",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "source": [
+    "### **Random Forest**"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 33,
+   "id": "8c1fd389",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-03-07T15:18:04.593629Z",
+     "iopub.status.busy": "2025-03-07T15:18:04.593355Z",
+     "iopub.status.idle": "2025-03-07T15:18:04.637124Z",
+     "shell.execute_reply": "2025-03-07T15:18:04.636285Z"
+    },
+    "papermill": {
+     "duration": 0.055322,
+     "end_time": "2025-03-07T15:18:04.638372",
+     "exception": false,
+     "start_time": "2025-03-07T15:18:04.583050",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "from sklearn.ensemble import RandomForestClassifier"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 34,
+   "id": "d0caa109",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-03-07T15:18:04.659071Z",
+     "iopub.status.busy": "2025-03-07T15:18:04.658713Z",
+     "iopub.status.idle": "2025-03-07T15:18:06.837023Z",
+     "shell.execute_reply": "2025-03-07T15:18:06.836079Z"
+    },
+    "papermill": {
+     "duration": 2.1902,
+     "end_time": "2025-03-07T15:18:06.838511",
+     "exception": false,
+     "start_time": "2025-03-07T15:18:04.648311",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "rf_model = RandomForestClassifier(n_estimators=100, random_state=42)\n",
+    "rf_model = rf_model.fit(X_train_V, y_train)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 35,
+   "id": "146fe36c",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-03-07T15:18:06.859818Z",
+     "iopub.status.busy": "2025-03-07T15:18:06.859568Z",
+     "iopub.status.idle": "2025-03-07T15:18:06.914108Z",
+     "shell.execute_reply": "2025-03-07T15:18:06.913286Z"
+    },
+    "papermill": {
+     "duration": 0.066569,
+     "end_time": "2025-03-07T15:18:06.915546",
+     "exception": false,
+     "start_time": "2025-03-07T15:18:06.848977",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "rf_prediction = rf_model.predict(X_test_V)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 36,
+   "id": "de79088b",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-03-07T15:18:06.936017Z",
+     "iopub.status.busy": "2025-03-07T15:18:06.935800Z",
+     "iopub.status.idle": "2025-03-07T15:18:06.940864Z",
+     "shell.execute_reply": "2025-03-07T15:18:06.940098Z"
+    },
+    "papermill": {
+     "duration": 0.016643,
+     "end_time": "2025-03-07T15:18:06.942114",
+     "exception": false,
+     "start_time": "2025-03-07T15:18:06.925471",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Random Forest Accuracy: 0.9674\n"
+     ]
+    }
+   ],
+   "source": [
+    "rf_accuracy = accuracy_score(y_test, rf_prediction)\n",
+    "print(f'Random Forest Accuracy: {rf_accuracy:.4f}')"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "bddca606",
+   "metadata": {
+    "papermill": {
+     "duration": 0.009778,
+     "end_time": "2025-03-07T15:18:06.961850",
+     "exception": false,
+     "start_time": "2025-03-07T15:18:06.952072",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "source": [
+    "### **LSTM**"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 37,
+   "id": "ffea30c6",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-03-07T15:18:06.982657Z",
+     "iopub.status.busy": "2025-03-07T15:18:06.982370Z",
+     "iopub.status.idle": "2025-03-07T15:18:18.028744Z",
+     "shell.execute_reply": "2025-03-07T15:18:18.028003Z"
+    },
+    "papermill": {
+     "duration": 11.058431,
+     "end_time": "2025-03-07T15:18:18.030356",
+     "exception": false,
+     "start_time": "2025-03-07T15:18:06.971925",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "from tensorflow.keras.models import Sequential\n",
+    "from tensorflow.keras.layers import Embedding, LSTM, Dense, SpatialDropout1D\n",
+    "from tensorflow.keras.preprocessing.text import Tokenizer\n",
+    "from tensorflow.keras.preprocessing.sequence import pad_sequences"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 38,
+   "id": "dce72b92",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-03-07T15:18:18.052274Z",
+     "iopub.status.busy": "2025-03-07T15:18:18.051791Z",
+     "iopub.status.idle": "2025-03-07T15:18:18.981853Z",
+     "shell.execute_reply": "2025-03-07T15:18:18.981088Z"
+    },
+    "papermill": {
+     "duration": 0.942296,
+     "end_time": "2025-03-07T15:18:18.983347",
+     "exception": false,
+     "start_time": "2025-03-07T15:18:18.041051",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "tokenizer = Tokenizer(num_words=500)\n",
+    "tokenizer.fit_on_texts(X_train)\n",
+    "X_train_seq = tokenizer.texts_to_sequences(X_train)\n",
+    "X_test_seq = tokenizer.texts_to_sequences(X_test)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 39,
+   "id": "43b092be",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-03-07T15:18:19.012015Z",
+     "iopub.status.busy": "2025-03-07T15:18:19.011753Z",
+     "iopub.status.idle": "2025-03-07T15:18:19.016461Z",
+     "shell.execute_reply": "2025-03-07T15:18:19.015754Z"
+    },
+    "papermill": {
+     "duration": 0.018833,
+     "end_time": "2025-03-07T15:18:19.017724",
+     "exception": false,
+     "start_time": "2025-03-07T15:18:18.998891",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "max_length = max(len(seq) for seq in X_train_seq)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 40,
+   "id": "1ffa955d",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-03-07T15:18:19.054791Z",
+     "iopub.status.busy": "2025-03-07T15:18:19.054351Z",
+     "iopub.status.idle": "2025-03-07T15:18:19.115731Z",
+     "shell.execute_reply": "2025-03-07T15:18:19.114985Z"
+    },
+    "papermill": {
+     "duration": 0.083996,
+     "end_time": "2025-03-07T15:18:19.117098",
+     "exception": false,
+     "start_time": "2025-03-07T15:18:19.033102",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "X_train_pad = pad_sequences(X_train_seq,maxlen= max_length, padding= 'post')\n",
+    "X_test_pad = pad_sequences(X_test_seq, maxlen= max_length, padding= 'post')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 41,
+   "id": "e74065e5",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-03-07T15:18:19.138226Z",
+     "iopub.status.busy": "2025-03-07T15:18:19.138005Z",
+     "iopub.status.idle": "2025-03-07T15:18:19.141297Z",
+     "shell.execute_reply": "2025-03-07T15:18:19.140681Z"
+    },
+    "papermill": {
+     "duration": 0.015188,
+     "end_time": "2025-03-07T15:18:19.142721",
+     "exception": false,
+     "start_time": "2025-03-07T15:18:19.127533",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "y_train_np = np.array(y_train)\n",
+    "y_test_np = np.array(y_test)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 42,
+   "id": "55533eed",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-03-07T15:18:19.163473Z",
+     "iopub.status.busy": "2025-03-07T15:18:19.163219Z",
+     "iopub.status.idle": "2025-03-07T15:18:20.007596Z",
+     "shell.execute_reply": "2025-03-07T15:18:20.006877Z"
+    },
+    "papermill": {
+     "duration": 0.855983,
+     "end_time": "2025-03-07T15:18:20.008922",
+     "exception": false,
+     "start_time": "2025-03-07T15:18:19.152939",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "lstm_model = Sequential([\n",
+    "    Embedding(input_dim=5000, output_dim= 128),\n",
+    "    SpatialDropout1D(0.2),\n",
+    "    LSTM(100, dropout=0.2, recurrent_dropout=0.2),\n",
+    "    Dense(1,activation='sigmoid')\n",
+    "])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 43,
+   "id": "dc3f5421",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-03-07T15:18:20.030050Z",
+     "iopub.status.busy": "2025-03-07T15:18:20.029803Z",
+     "iopub.status.idle": "2025-03-07T15:22:25.730170Z",
+     "shell.execute_reply": "2025-03-07T15:22:25.729377Z"
+    },
+    "papermill": {
+     "duration": 245.712118,
+     "end_time": "2025-03-07T15:22:25.731435",
+     "exception": false,
+     "start_time": "2025-03-07T15:18:20.019317",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Epoch 1/5\n",
+      "\u001b[1m25/25\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m54s\u001b[0m 2s/step - accuracy: 0.5176 - loss: 0.6936 - val_accuracy: 0.5639 - val_loss: 0.6930\n",
+      "Epoch 2/5\n",
+      "\u001b[1m25/25\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m48s\u001b[0m 2s/step - accuracy: 0.5233 - loss: 0.6928 - val_accuracy: 0.5639 - val_loss: 0.6886\n",
+      "Epoch 3/5\n",
+      "\u001b[1m25/25\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m48s\u001b[0m 2s/step - accuracy: 0.5200 - loss: 0.6928 - val_accuracy: 0.5639 - val_loss: 0.6892\n",
+      "Epoch 4/5\n",
+      "\u001b[1m25/25\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m48s\u001b[0m 2s/step - accuracy: 0.5205 - loss: 0.6926 - val_accuracy: 0.5639 - val_loss: 0.6877\n",
+      "Epoch 5/5\n",
+      "\u001b[1m25/25\u001b[0m \u001b[32m━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[37m\u001b[0m \u001b[1m48s\u001b[0m 2s/step - accuracy: 0.5262 - loss: 0.6920 - val_accuracy: 0.5639 - val_loss: 0.6887\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "<keras.src.callbacks.history.History at 0x7f69964262c0>"
+      ]
+     },
+     "execution_count": 43,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "lstm_model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])\n",
+    "lstm_model.fit(X_train_pad, y_train_np, epochs=5, batch_size=128, validation_data=(X_test_pad,y_test_np))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 44,
+   "id": "98395051",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-03-07T15:22:25.764806Z",
+     "iopub.status.busy": "2025-03-07T15:22:25.764552Z",
+     "iopub.status.idle": "2025-03-07T15:22:36.183346Z",
+     "shell.execute_reply": "2025-03-07T15:22:36.182489Z"
+    },
+    "papermill": {
+     "duration": 10.436953,
+     "end_time": "2025-03-07T15:22:36.184976",
+     "exception": false,
+     "start_time": "2025-03-07T15:22:25.748023",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "LSTM Accuracy: 0.5639\n"
+     ]
+    }
+   ],
+   "source": [
+    "lstm_loss, lstm_accuracy = lstm_model.evaluate(X_test_pad, y_test_np, verbose=0)\n",
+    "print(f'LSTM Accuracy: {lstm_accuracy:.4f}')"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "34f70384",
+   "metadata": {
+    "papermill": {
+     "duration": 0.017006,
+     "end_time": "2025-03-07T15:22:36.219608",
+     "exception": false,
+     "start_time": "2025-03-07T15:22:36.202602",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "source": [
+    "### **Accuracy**"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 45,
+   "id": "863e400e",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-03-07T15:22:36.253508Z",
+     "iopub.status.busy": "2025-03-07T15:22:36.253204Z",
+     "iopub.status.idle": "2025-03-07T15:22:36.258834Z",
+     "shell.execute_reply": "2025-03-07T15:22:36.258167Z"
+    },
+    "papermill": {
+     "duration": 0.024227,
+     "end_time": "2025-03-07T15:22:36.260090",
+     "exception": false,
+     "start_time": "2025-03-07T15:22:36.235863",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "\n",
+      " Model Accuracies:\n",
+      "Random Forest: 0.9674\n",
+      "Naïve Bayes: 0.9148\n",
+      "LSTM: 0.5639\n"
+     ]
+    }
+   ],
+   "source": [
+    "def sort_model_accuracies(model_accuracies):\n",
+    "    sorted_accuracies = sorted(model_accuracies.items(), key=lambda x: x[1], reverse=True)\n",
+    "    print(\"\\n Model Accuracies:\")\n",
+    "    for model, accuracy in sorted_accuracies:\n",
+    "        print(f\"{model}: {accuracy:.4f}\")\n",
+    "\n",
+    "model_accuracies = {\n",
+    "    'Naïve Bayes': nb_accuracy,\n",
+    "    'Random Forest': rf_accuracy,\n",
+    "    'LSTM': lstm_accuracy\n",
+    "}\n",
+    "\n",
+    "sort_model_accuracies(model_accuracies)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 46,
+   "id": "aac373d9",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-03-07T15:22:36.294850Z",
+     "iopub.status.busy": "2025-03-07T15:22:36.294576Z",
+     "iopub.status.idle": "2025-03-07T15:22:36.298127Z",
+     "shell.execute_reply": "2025-03-07T15:22:36.297222Z"
+    },
+    "papermill": {
+     "duration": 0.023521,
+     "end_time": "2025-03-07T15:22:36.299640",
+     "exception": false,
+     "start_time": "2025-03-07T15:22:36.276119",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "# save random forest model\n",
+    "import pickle\n",
+    "import joblib"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 47,
+   "id": "2fb16082",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-03-07T15:22:36.334397Z",
+     "iopub.status.busy": "2025-03-07T15:22:36.334156Z",
+     "iopub.status.idle": "2025-03-07T15:22:36.382710Z",
+     "shell.execute_reply": "2025-03-07T15:22:36.381888Z"
+    },
+    "papermill": {
+     "duration": 0.066413,
+     "end_time": "2025-03-07T15:22:36.384012",
+     "exception": false,
+     "start_time": "2025-03-07T15:22:36.317599",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "['rf_model1.pkl']"
+      ]
+     },
+     "execution_count": 47,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "joblib.dump(rf_model, 'rf_model1.pkl')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 48,
+   "id": "4028bb68",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-03-07T15:22:36.417255Z",
+     "iopub.status.busy": "2025-03-07T15:22:36.417016Z",
+     "iopub.status.idle": "2025-03-07T15:22:36.555154Z",
+     "shell.execute_reply": "2025-03-07T15:22:36.554423Z"
+    },
+    "papermill": {
+     "duration": 0.156387,
+     "end_time": "2025-03-07T15:22:36.556485",
+     "exception": false,
+     "start_time": "2025-03-07T15:22:36.400098",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "['vectorizer1.pkl']"
+      ]
+     },
+     "execution_count": 48,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# save vectorize file\n",
+    "joblib.dump(vectorizer, 'vectorizer1.pkl')"
+   ]
+  }
+ ],
+ "metadata": {
+  "kaggle": {
+   "accelerator": "gpu",
+   "dataSources": [
+    {
+     "datasetId": 6410,
+     "sourceId": 9356,
+     "sourceType": "datasetVersion"
+    }
+   ],
+   "dockerImageVersionId": 30918,
+   "isGpuEnabled": true,
+   "isInternetEnabled": true,
+   "language": "python",
+   "sourceType": "notebook"
+  },
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.10.12"
+  },
+  "papermill": {
+   "default_parameters": {},
+   "duration": 324.766577,
+   "end_time": "2025-03-07T15:22:38.795495",
+   "environment_variables": {},
+   "exception": null,
+   "input_path": "__notebook__.ipynb",
+   "output_path": "__notebook__.ipynb",
+   "parameters": {},
+   "start_time": "2025-03-07T15:17:14.028918",
+   "version": "2.6.0"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
