@@ -1,0 +1,12 @@
+text,airline_sentiment
+"I love the service on my flight today!",positive
+"My flight was delayed for 3 hours, very disappointed",negative
+"Friendly staff and smooth boarding, thanks!",positive
+"The plane was late again, not happy",negative
+"Great experience, will fly again",positive
+"Lost my luggage, terrible service",negative
+"Awesome airline! Comfortable seats",positive
+"Flight canceled without notice, unacceptable",negative
+"Good food and clean seats",positive
+"Customer support didn't help me at all",negative
+
