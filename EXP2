@@ -1,0 +1,16 @@
+def now_ms():                       
+    return time.time_ns() // 1_000_000 
+def simulate(passphrase, reps, out="synthetic_keystrokes.csv"): 
+    with open(out, "w", newline="") as f: 
+        w = csv.writer(f) 
+        w.writerow(["repetition","char_index","char","timestamp_ms"]) 
+        for rep in range(1, reps+1): 
+            for i,ch in enumerate(passphrase):
+  w.writerow([rep, i, ch, now_ms()]) 
+                time.sleep((10 + (i % 5)*4)/1000.0)  # 10-26 ms 
+    print(f"Written: {out}") 
+ if _name_ == "_main_": 
+    p = input("Passphrase (default 'securitylab'): ").strip() or "securitylab" 
+    r = input("Repetitions (default 5): ").strip() 
+    reps = int(r) if r.isdigit() and int(r)>0 else 5 
+    simulate(p, reps)
