@@ -1,0 +1,27 @@
+#include <stdio.h> 
+#include <math.h> 
+// Power function (a^b % m) 
+long long power(long long a, long long b, long long m) { 
+    long long res = 1; 
+    for (int i = 0; i < b; i++) 
+        res = (res * a) % m; 
+    return res; 
+} 
+int main() { 
+    long long P = 23;   // Prime number 
+    long long G = 5;    // Primitive root 
+    long long a = 6;    // Alice's private key 
+    long long b = 15;   // Bob's private key
+    // Compute public keys 
+    long long x = power(G, a, P);   // Alice sends to Bob                                                                                                                     
+    long long y = power(G, b, P);   // Bob sends to Alice 
+    // Compute shared secret 
+    long long ka = power(y, a, P);  // Alice's secret 
+    long long kb = power(x, b, P);  // Bob's secret 
+    printf("Publicly Shared: P=%lld, G=%lld\n", P, G); 
+    printf("Alice's Public Key: %lld\n", x); 
+    printf("Bob's Public Key: %lld\n", y); 
+    printf("Alice's Secret: %lld\n", ka); 
+    printf("Bob's Secret: %lld\n", kb); 
+    return 0; 
+}
